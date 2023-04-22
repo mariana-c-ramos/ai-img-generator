@@ -16,7 +16,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.listen(8080, () => console.log('make art on http://localhost:8080/dream'));
+
 app.post('/dream', async (req, res) => {
+  try {
     const prompt = req.body.prompt;
 
     const aiResponse = await openai.createImage({
@@ -27,6 +30,8 @@ app.post('/dream', async (req, res) => {
 
     const image = aiResponse.data.data[0].url;
     res.send({ image });
+  } catch (error) {
+    console.error(error)
+    res.status(500).send(error?.response.data.error.message || 'Something went wrong');
+  }
 });
-
-app.listen(8080, () => console.log('make art on http://localhost:8080/dream'));
